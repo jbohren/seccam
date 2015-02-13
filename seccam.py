@@ -4,7 +4,7 @@ import rospy
 import sys
 import cv2
 import cv2.cv as cv
-from sensor_msgs.msg import Image, CameraInfo
+from sensor_msgs.msg import Image, CompressedImage, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 
@@ -13,7 +13,7 @@ class SecCam(object):
         self.threshold = rospy.get_param('~thresh', 0.1)
 
         self.img_buffer = []
-        self.buflen = 100
+        self.buflen = 10
 
         self.image_pub = None
         self.image_sub = None
@@ -22,16 +22,23 @@ class SecCam(object):
 
         self.motion_detection_time = rospy.Time()
 
-        self.image_sub = rospy.Subscriber("/image", Image, self.image_callback)
-        self.image_pub = rospy.Publisher("/image_out", Image)
+        self.image_sub = rospy.Subscriber("image", Image, self.image_callback)
+        self.image_pub = rospy.Publisher("image_out", Image)
 
 
 
     def image_callback(self, ros_image):
+        print 'msg'
         if (rospy.Time.now()-self.motion_detection_time).to_sec() < 10.0:
             self.image_pub.publish(ros_image)
+            print 'motion'
         else:
             # Use cv_bridge() to convert the ROS image to OpenCV format
+
+            if 1:
+            np_arr = np.fromstring(ros_image.data, np.uint8)
+            rgb_frame  = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+
             try:
                 rgb = self.bridge.imgmsg_to_cv(ros_image, "bgr8")
             except CvBridgeError, e:
@@ -39,7 +46,7 @@ class SecCam(object):
 
             # Convert the image to a Numpy array since most cv2 functions
             # require Numpy arrays.
-            rgb_frame = np.array(rgb, dtype=np.uint8)
+                rgb_frame = np.array(rgb, dtype=np.uint8)
 
             new_img = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2GRAY)
 
@@ -54,12 +61,12 @@ class SecCam(object):
             for i in range(len(self.img_buffer)):
                 diff = cv2.absdiff(self.img_buffer[0], self.img_buffer[i])
 
-                cv2.imshow("Image window", diff)
+                #cv2.imshow("Image window", diff)
 
                 _,threshed = cv2.threshold(diff, 10, 255, cv2.THRESH_BINARY)
 
-                cv2.imshow("Image window", threshed)
-                cv2.waitKey(3)
+                #cv2.imshow("Image window", threshed)
+                #cv2.waitKey(3)
 
                 nz = cv2.countNonZero(threshed)
                 nnz = float(nz)/float(threshed.size)
@@ -69,6 +76,7 @@ class SecCam(object):
                     self.motion_detection_time = rospy.Time.now()
                     rospy.loginfo( 'detected motion @ '+str(self.motion_detection_time))
                     return
+        print 'no motion'
 
 def main():
 
