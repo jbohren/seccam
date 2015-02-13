@@ -22,8 +22,8 @@ class SecCam(object):
 
         self.motion_detection_time = rospy.Time()
 
-        self.image_sub = rospy.Subscriber("image", Image, self.image_callback)
-        self.image_pub = rospy.Publisher("image_out", Image)
+        self.image_sub = rospy.Subscriber("image", CompressedImage, self.image_callback)
+        self.image_pub = rospy.Publisher("image_out", CompressedImage)
 
 
 
@@ -36,16 +36,17 @@ class SecCam(object):
             # Use cv_bridge() to convert the ROS image to OpenCV format
 
             if 1:
-            np_arr = np.fromstring(ros_image.data, np.uint8)
-            rgb_frame  = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+                np_arr = np.fromstring(ros_image.data, np.uint8)
+                rgb_frame  = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
 
-            try:
-                rgb = self.bridge.imgmsg_to_cv(ros_image, "bgr8")
-            except CvBridgeError, e:
-                print e
+            else:
+                try:
+                    rgb = self.bridge.imgmsg_to_cv(ros_image, "bgr8")
+                except CvBridgeError, e:
+                    print e
 
-            # Convert the image to a Numpy array since most cv2 functions
-            # require Numpy arrays.
+                # Convert the image to a Numpy array since most cv2 functions
+                # require Numpy arrays.
                 rgb_frame = np.array(rgb, dtype=np.uint8)
 
             new_img = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2GRAY)
