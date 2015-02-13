@@ -30,7 +30,6 @@ class SecCam(object):
     def image_callback(self, ros_image):
         if (rospy.Time.now()-self.motion_detection_time).to_sec() < 5*60.0:
             self.image_pub.publish(ros_image)
-            print 'motion'
             return
         else:
             # Use cv_bridge() to convert the ROS image to OpenCV format
@@ -71,13 +70,13 @@ class SecCam(object):
 
                 nz = cv2.countNonZero(threshed)
                 nnz = float(nz)/float(threshed.size)
-                print nnz
+                #print nnz
 
                 if nnz > self.threshold:
                     self.motion_detection_time = rospy.Time.now()
                     rospy.loginfo( 'detected motion @ '+str(self.motion_detection_time))
                     return
-        print 'no motion'
+        #print 'no motion'
 
 def main():
 

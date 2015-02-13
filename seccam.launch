@@ -1,17 +1,17 @@
 <launch>
-  <node pkg="seccam" type="seccam.py" name="seccam_north">
+  <node pkg="seccam" type="seccam.py" name="seccam_north" output="screen">
     <param name="thresh" value="0.3"/>
     <remap from="image_in/compressed" to="/b08_wall_north/camera/rgb/image_raw/compressed"/>
     <remap from="image_out/compressed" to="/b08_wall_north/compressed"/>
   </node>
 
-  <node pkg="seccam" type="seccam.py" name="seccam_kitchen">
+  <node pkg="seccam" type="seccam.py" name="seccam_kitchen" output="screen">
     <param name="thresh" value="0.3"/>
     <remap from="image_in/compressed" to="/b08_wall_kitchen/camera/rgb/image_raw/compressed"/>
     <remap from="image_out/compressed" to="/b08_wall_kitchen/compressed"/>
   </node>
 
-  <node pkg="seccam" type="seccam.py" name="seccam_wam">
+  <node pkg="seccam" type="seccam.py" name="seccam_wam" output="screen">
     <param name="thresh" value="0.3"/>
     <remap from="image_in/compressed" to="/b08_wam/camera/rgb/image_raw/compressed"/>
     <remap from="image_out/compressed" to="/b08_wam/compressed"/>
