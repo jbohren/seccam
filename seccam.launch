@@ -1,0 +1,25 @@
+<launch>
+  <node pkg="seccam" type="seccam.py" name="seccam_north">
+    <param name="thresh" value="0.3"/>
+    <remap from="image_in/compressed" to="/b08_wall_north/camera/rgb/image_raw/compressed"/>
+    <remap from="image_out/compressed" to="/b08_wall_north/compressed"/>
+  </node>
+
+  <node pkg="seccam" type="seccam.py" name="seccam_kitchen">
+    <param name="thresh" value="0.3"/>
+    <remap from="image_in/compressed" to="/b08_wall_kitchen/camera/rgb/image_raw/compressed"/>
+    <remap from="image_out/compressed" to="/b08_wall_kitchen/compressed"/>
+  </node>
+
+  <node pkg="seccam" type="seccam.py" name="seccam_wam">
+    <param name="thresh" value="0.3"/>
+    <remap from="image_in/compressed" to="/b08_wam/camera/rgb/image_raw/compressed"/>
+    <remap from="image_out/compressed" to="/b08_wam/compressed"/>
+  </node>
+
+    <!--
+    rosbag record /b08_wall_kitchen/camera/rgb/image_raw/compressed 
+    /b08_wall_north/camera/rgb/image_raw/compressed 
+    /b08_wam/camera/rgb/image_raw/compressed -->
+
+</launch>
