@@ -13,7 +13,7 @@ class SecCam(object):
         self.threshold = rospy.get_param('~thresh', 0.1)
 
         self.img_buffer = []
-        self.buflen = 10
+        self.buflen = 30
 
         self.image_pub = None
         self.image_sub = None
@@ -22,16 +22,16 @@ class SecCam(object):
 
         self.motion_detection_time = rospy.Time()
 
-        self.image_sub = rospy.Subscriber("image", CompressedImage, self.image_callback)
-        self.image_pub = rospy.Publisher("image_out", CompressedImage)
+        self.image_sub = rospy.Subscriber("image_in/compressed", CompressedImage, self.image_callback)
+        self.image_pub = rospy.Publisher("image_out/compressed", CompressedImage)
 
 
 
     def image_callback(self, ros_image):
-        print 'msg'
-        if (rospy.Time.now()-self.motion_detection_time).to_sec() < 10.0:
+        if (rospy.Time.now()-self.motion_detection_time).to_sec() < 5*60.0:
             self.image_pub.publish(ros_image)
             print 'motion'
+            return
         else:
             # Use cv_bridge() to convert the ROS image to OpenCV format
 
