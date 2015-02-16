@@ -28,7 +28,7 @@ class SecCam(object):
 
 
     def image_callback(self, ros_image):
-        if (rospy.Time.now()-self.motion_detection_time).to_sec() < 5*60.0:
+        if (rospy.Time.now()-self.motion_detection_time).to_sec() < 0.1*60.0:
             self.image_pub.publish(ros_image)
             return
         else:
@@ -63,7 +63,7 @@ class SecCam(object):
 
                 #cv2.imshow("Image window", diff)
 
-                _,threshed = cv2.threshold(diff, 10, 255, cv2.THRESH_BINARY)
+                _,threshed = cv2.threshold(diff, 50, 255, cv2.THRESH_BINARY)
 
                 #cv2.imshow("Image window", threshed)
                 #cv2.waitKey(3)
