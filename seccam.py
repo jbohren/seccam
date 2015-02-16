@@ -11,6 +11,7 @@ import numpy as np
 class SecCam(object):
     def __init__(self):
         self.threshold = rospy.get_param('~thresh', 0.1)
+        self.diff_threshold = rospy.get_param('~diff_thresh', 60)
 
         self.img_buffer = []
         self.buflen = 30
@@ -61,12 +62,12 @@ class SecCam(object):
             for i in range(len(self.img_buffer)):
                 diff = cv2.absdiff(self.img_buffer[0], self.img_buffer[i])
 
-                #cv2.imshow("Image window", diff)
+                cv2.imshow("Image window", diff)
 
-                _,threshed = cv2.threshold(diff, 50, 255, cv2.THRESH_BINARY)
+                _,threshed = cv2.threshold(diff, self.diff_threshold, 255, cv2.THRESH_BINARY)
 
-                #cv2.imshow("Image window", threshed)
-                #cv2.waitKey(3)
+                cv2.imshow("Image window", threshed)
+                cv2.waitKey(3)
 
                 nz = cv2.countNonZero(threshed)
                 nnz = float(nz)/float(threshed.size)
